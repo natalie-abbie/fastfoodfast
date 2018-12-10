@@ -1,8 +1,13 @@
-from flask import Flask, jsonify, request, json
+from flask import Blueprint,Flask, jsonify, json, requests
+from app.main.users import users
 
 app = Flask(__name__)
+app.register_blueprint(users)
 
-orders = []
+users = Blueprint('users',__name__)
+
+
+@users.route("/",methods=['GET'])
 
 users_list = []
 
@@ -10,8 +15,7 @@ loggedinuser = []
 
 # routes for the api
 
-
-@app.route('/api/v1/register', methods=['POST'])
+@users.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
 
@@ -49,7 +53,7 @@ def register():
             return jsonify({"message": "Account created successfully", 'users': users_list}), 200
 
 # Login
-@app.route('/api/v1/login', methods=['POST'])
+@user.route('/login', methods=['POST'])
 def login():
 
     data = request.get_json()
@@ -88,7 +92,7 @@ def login():
             
 
 
-@app.route('/api/v1/session', methods=['POST'])
+@app.route('/session', methods=['POST'])
 def session():
 
     username = []
@@ -100,37 +104,3 @@ def session():
 
     elif option == "view orders":
         return order()
-
-
-@app.route('/api/v1/order', methods=['POST'])
-def order():
-   global orders
-   # name_of_food, price, quantity, restaurant
-   userdata = request.get_json()
-   try:
-        name = userdata['name']
-        price = userdata['price']
-        quantity = userdata['quantity']
-        location = userdata['location']
-
-   except KeyError as item:
-       return jsonify({'message': str(item)+'missing'}), 400
-
-   new_order = {
-       'name_of_food': name,
-       'price': price,
-       'quantity': quantity,
-       'location': location
-   }
-
-   orders.append(new_order)
-   return jsonify({"message": "order created"}), 201
-
-
-@app.route('/api/v1/order', methods=['GET'])
-def get_order():
-   return jsonify({'orders': orders}), 200
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
