@@ -1,5 +1,5 @@
 import unittest
-from fastfoodsapp import app
+from flask import app
 from flask import json
 
 class food(unittest.TestCase):
