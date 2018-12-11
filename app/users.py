@@ -1,54 +1,45 @@
-from flask import Blueprint,Flask, jsonify, json, requests
-from app.main.users import users
+from flask import Blueprint,Flask, jsonify, json, request
 
-app = Flask(__name__)
-app.register_blueprint(users)
-
-users = Blueprint('users',__name__)
-
-
-@users.route("/",methods=['GET'])
+user = Blueprint('users', __name__)
 
 users_list = []
-
 loggedinuser = []
 
 # routes for the api
 
-@users.route('/register', methods=['POST'])
+@user.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
 
     username = data['username']
-    password = data['password']
+    email = data['email']
+    contact = data['contact']
     role = data['role']
+    password = data['password']
 
     try:
         username = data['username']
-        password = data['password']
+        email = data['email']
+        contact = data['contact']
         role = data['role']
+        password = data['password']
 
     except KeyError as item:
         return jsonify({'message': str(item)+'missing'}), 400
 
     users = {
         'username': username,
-        'password': password,
-        'role': role
+        'email': email,
+        'contact': contact,
+        'role': role,
+        'password': password
     }
     users_list.append(users)
 
     for users in users_list:
 
-        if not len(username) > 0:
-            return jsonify({"message": "username can't be blank"}), 400
-
-        if not len(password) > 0:
-            return jsonify({"message": "password can't be blank"}), 400
         
-        if not len(role) > 0:
-            return jsonify({"message": "role can't be blank"}), 400
-
+    
         else:
             return jsonify({"message": "Account created successfully", 'users': users_list}), 200
 
@@ -78,8 +69,8 @@ def login():
 
     for users in users_list:
 
-        if not len(username) > 0 and not len(password) > 0 and not len(role) > 0:
-            return jsonify({"message":"fields can't be blank"}), 400
+        if not len(username) > 0 and not len(email) > 0 and not len(contact) > 0 and not len(password) >0 and not len(role) >0:
+            return jsonify({"message": "field can't be blank"}), 400
 
         if username == username and password == password and role == role:
             return jsonify({"message": "login successful"}), 200
@@ -92,7 +83,7 @@ def login():
             
 
 
-@app.route('/session', methods=['POST'])
+@user.route('/session', methods=['POST'])
 def session():
 
     username = []

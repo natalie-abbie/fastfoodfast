@@ -1,16 +1,12 @@
-from flask import Blueprint,Flask, jsonify, json, request
-from app.main.orders import orders
+from flask import Blueprint, Flask, jsonify, json, request
 
-app = Flask(__name__)
-app.register_blueprint(order)
+orders = Blueprint('order',__name__)
 
-users = Blueprint('order',__name__)
+orders_list = []
 
-orders = []
-
-@order.route("/order", methods=['POST'])
-def order():
-   global orders
+@orders.route("/order", methods=['POST'])
+def post_order():
+   global orders_list
    # name_of_food, price, quantity, restaurant
    userdata = request.get_json()
    try:
@@ -20,7 +16,7 @@ def order():
         location = userdata['location']
 
    except KeyError as item:
-       return jsonify({'message': str(item)+'missing'}), 400
+       return jsonify({'message': str(item) + 'missing'}), 400
 
    new_order = {
        'name_of_food': name,
@@ -29,11 +25,12 @@ def order():
        'location': location
    }
 
-   orders.append(new_order)
+   orders_list.append(new_order)
    return jsonify({"message": "order created"}), 201
 
 
-@order.route('/order', methods=['GET'])
+@orders.route('/order', methods=['GET'])
 def get_order():
-   return jsonify({'orders': orders}), 200
-
+    if len(orders_list) == 0:
+        return jsonify({"message":"No orders found"})
+    return jsonify({'orders': orders_list}), 200

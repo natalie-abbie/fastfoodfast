@@ -1,9 +1,11 @@
-from flask import Flask
-import os
-from app import create_app
+from flask import Flask, json, jsonify, request, Blueprint
+from users import user
+from orders import orders
 
-app = create_app(os.environ.get('APP_ENV', 'development'))
+app = Flask(__name__)
+app.register_blueprint(user)
+app.register_blueprint(orders)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     app.run(debug=True)
