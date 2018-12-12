@@ -37,9 +37,9 @@ def register():
     users_list.append(users)
 
     for users in users_list:
-
+        if not len(username) > 0  and not len(email) > 0 and not len(contact) > 0 and not len(password) >0 and not len(role) >0:
+            return jsonify({"message": "field can't be blank"}), 400
         
-    
         else:
             return jsonify({"message": "Account created successfully", 'users': users_list}), 200
 
